@@ -41,3 +41,16 @@ jobs:
         run: |
           source venv/bin/activate
           python script_crypto_automation.py
+
+      - name: Send Webhook to Make.com
+        if: success()
+        uses: dawidd6/action-send-webhook@v2
+        with:
+          url: ${{ secrets.MAKE_WEBHOOK_URL }}
+          method: 'POST'
+          headers: 'Content-Type: application/json'
+          payload: |
+            {
+              "message": "Script d'automatisation crypto exécuté avec succès.",
+              "timestamp": "${{ github.event.schedule ? github.event.schedule.cron : 'manual' }}"
+            }
